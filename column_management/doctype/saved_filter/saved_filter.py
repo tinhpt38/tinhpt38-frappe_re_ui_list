@@ -213,8 +213,8 @@ class SavedFilter(Document):
 				copy_doc.insert(ignore_permissions=True)
 				shared_filters.append(copy_doc.name)
 		
-		return shared_filters	#
- Enhanced Saved Filter Management - Task 10.3
+		return shared_filters
+		# Enhanced Saved Filter Management - Task 10.3
 	
 	@staticmethod
 	def get_filter_categories(user, doctype_name):
