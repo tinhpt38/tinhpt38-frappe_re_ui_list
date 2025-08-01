@@ -16,10 +16,10 @@ dependencies = [
 ]
 
 [project.urls]
-Home = "https://github.com/tinhpt38/erpnext_column_mgmt"
-Documentation = "https://github.com/tinhpt38/erpnext_column_mgmt/wiki"
-Repository = "https://github.com/tinhpt38/erpnext_column_mgmt.git"
-Issues = "https://github.com/tinhpt38/erpnext_column_mgmt/issues"
+Home = "https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list"
+Documentation = "https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list/wiki"
+Repository = "https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list.git"
+Issues = "https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list/issues"
 
 [tool.bench.frappe-app]
 name = "column_management"

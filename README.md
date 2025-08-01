@@ -3,7 +3,7 @@
 Hệ thống quản lý cột nâng cao cho ERPNext List Views, cung cấp trải nghiệm người dùng được cải thiện và tính linh hoạt cao.
 
 **Tác giả**: P. Tính  
-**Repository**: https://github.com/tinhpt38/erpnext_column_mgmt
+**Repository**: https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list
 
 ## Tính năng
 
@@ -29,7 +29,7 @@ Hệ thống quản lý cột nâng cao cho ERPNext List Views, cung cấp trả
 
 ```bash
 # Lấy app từ GitHub
-bench get-app https://github.com/tinhpt38/erpnext_column_mgmt.git
+bench get-app https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list.git
 
 # Cài đặt trên site của bạn
 bench --site your-site-name install-app column_management
@@ -43,7 +43,7 @@ bench --site your-site-name migrate
 1. Clone repository vào thư mục apps:
 ```bash
 cd frappe-bench/apps
-git clone https://github.com/tinhpt38/erpnext_column_mgmt.git column_management
+git clone https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list.git column_management
 ```
 
 2. Cài đặt app:
@@ -171,9 +171,9 @@ MIT License. Xem file LICENSE để biết chi tiết.
 ## Hỗ trợ
 
 - **Tác giả**: P. Tính
-- **Repository**: https://github.com/tinhpt38/erpnext_column_mgmt
-- **Issues**: https://github.com/tinhpt38/erpnext_column_mgmt/issues
-- **Wiki**: https://github.com/tinhpt38/erpnext_column_mgmt/wiki
+- **Repository**: https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list
+- **Issues**: https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list/issues
+- **Wiki**: https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list/wiki
 
 ## Changelog
 

@@ -13,7 +13,7 @@ setup(
 	description="Advanced column management system for ERPNext List Views",
 	author="P. Tính",
 	author_email="tinhpt.38@gmail.com",
-	url="https://github.com/tinhpt38/erpnext_column_mgmt",
+	url="https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list",
 	packages=find_packages(),
 	zip_safe=False,
 	include_package_data=True,
