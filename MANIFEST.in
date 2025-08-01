@@ -1,0 +1,19 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+include *.yml
+recursive-include column_management *.css
+recursive-include column_management *.csv
+recursive-include column_management *.html
+recursive-include column_management *.ico
+recursive-include column_management *.js
+recursive-include column_management *.json
+recursive-include column_management *.md
+recursive-include column_management *.png
+recursive-include column_management *.py
+recursive-include column_management *.svg
+recursive-include column_management *.txt
+recursive-exclude column_management *.pyc
