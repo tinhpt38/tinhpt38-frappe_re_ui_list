@@ -1,16 +1,16 @@
 [build-system]
-requires = ["flit_core >=3.4,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "column_management"
+version = "1.0.0"
 authors = [
-    {name = "P. Tính", email = "tinhpt.38@gmail.com"}
+    {name = "P. Tính", email = "tinhpt38@gmail.com"}
 ]
 description = "Advanced column management system for ERPNext List Views"
 readme = "README.md"
 requires-python = ">=3.7"
-dynamic = ["version"]
 dependencies = [
     "frappe"
 ]
