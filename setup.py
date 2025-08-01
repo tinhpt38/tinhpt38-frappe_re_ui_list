@@ -4,23 +4,7 @@ from setuptools import setup, find_packages
 with open("requirements.txt") as f:
 	install_requires = f.read().strip().split("\n")
 
-# get version from __version__.py file
-import os
-import sys
-
-def get_version():
-	"""Get version from __version__.py file"""
-	here = os.path.abspath(os.path.dirname(__file__))
-	version_file = os.path.join(here, "__version__.py")
-	
-	if os.path.exists(version_file):
-		version_dict = {}
-		with open(version_file, 'r', encoding='utf-8') as f:
-			exec(f.read(), version_dict)
-		return version_dict.get('__version__', '1.0.0')
-	return "1.0.0"
-
-version = get_version()
+version = "1.0.0"
 
 setup(
 	name="column_management",
