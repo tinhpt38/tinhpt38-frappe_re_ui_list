@@ -5,7 +5,23 @@ with open("requirements.txt") as f:
 	install_requires = f.read().strip().split("\n")
 
 # get version from __version__ variable in column_management/__init__.py
-from column_management import __version__ as version
+import os
+import re
+
+def get_version():
+	"""Get version from __init__.py file"""
+	here = os.path.abspath(os.path.dirname(__file__))
+	init_file = os.path.join(here, "column_management", "__init__.py")
+	
+	if os.path.exists(init_file):
+		with open(init_file, 'r', encoding='utf-8') as f:
+			content = f.read()
+			version_match = re.search(r"__version__\s*=\s*['\"]([^'\"]*)['\"]", content)
+			if version_match:
+				return version_match.group(1)
+	return "1.0.0"
+
+version = get_version()
 
 setup(
 	name="column_management",
