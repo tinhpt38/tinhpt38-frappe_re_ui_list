@@ -99,9 +99,9 @@ before_uninstall = "column_management.column_management.install.before_uninstall
 
 doc_events = {
 	"*": {
-		"on_update": "column_management.hooks.on_doc_update",
-		"on_submit": "column_management.hooks.on_doc_submit",
-		"on_cancel": "column_management.hooks.on_doc_cancel"
+		"on_update": "column_management.column_management.hooks.on_doc_update",
+		"on_submit": "column_management.column_management.hooks.on_doc_submit",
+		"on_cancel": "column_management.column_management.hooks.on_doc_cancel"
 	}
 }
 
