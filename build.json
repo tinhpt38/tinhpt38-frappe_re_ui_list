@@ -1,0 +1,8 @@
+{
+	"css/column_management.css": [
+		"public/css/column_management.css"
+	],
+	"js/column_management.js": [
+		"public/js/column_management.js"
+	]
+}
