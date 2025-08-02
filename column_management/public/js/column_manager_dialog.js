@@ -408,10 +408,22 @@ column_management.dialog = {
     
     // Save configuration
     saveConfiguration: function() {
+        // Filter out system fields that might cause validation errors
+        const filteredColumns = this.selectedColumns.filter(col => {
+            const systemFields = ['name', 'owner', 'creation', 'modified', 'modified_by'];
+            if (systemFields.includes(col.fieldname)) {
+                console.log(`🚫 Skipping system field: ${col.fieldname}`);
+                return false;
+            }
+            return true;
+        });
+        
         const config = {
             doctype: this.currentDoctype,
-            columns: this.selectedColumns
+            columns: filteredColumns
         };
+        
+        console.log('💾 Saving config with columns:', filteredColumns.map(c => c.fieldname));
         
         frappe.call({
             method: 'column_management.api.column_manager.save_column_config',
@@ -425,18 +437,23 @@ column_management.dialog = {
                     this.dialog.hide();
                     
                     // Apply configuration to list view
+                    console.log('🎨 Attempting to apply saved configuration to list view...');
+                    
+                    // Try debug version first
                     if (typeof column_management !== 'undefined' && column_management.listViewApplierDebug) {
-                        console.log('🎨 Applying saved configuration to list view (debug)...');
+                        console.log('🔧 Using debug list view applier...');
                         column_management.listViewApplierDebug.init(this.currentDoctype);
                     } else if (typeof column_management !== 'undefined' && column_management.listViewApplier) {
-                        console.log('🎨 Applying saved configuration to list view...');
+                        console.log('🔧 Using regular list view applier...');
                         column_management.listViewApplier.init(this.currentDoctype);
                     } else {
-                        console.log('🔄 Refreshing list view...');
+                        console.log('⚠️ List view applier not available, trying fallback...');
                         // Fallback: refresh list view
                         if (cur_list && cur_list.refresh) {
+                            console.log('🔄 Refreshing list view...');
                             cur_list.refresh();
                         } else {
+                            console.log('🔄 Reloading page...');
                             location.reload();
                         }
                     }

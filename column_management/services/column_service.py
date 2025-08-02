@@ -294,6 +294,9 @@ class ColumnService:
 		if not isinstance(config["columns"], list):
 			frappe.throw(_("Columns must be a list"))
 		
+		# Debug: log incoming config
+		frappe.logger().debug(f"Validating config for {doctype}: {config}")
+		
 		# Get available fields
 		available_fields = self._get_doctype_fields(doctype)
 		available_fieldnames = {field["fieldname"] for field in available_fields}
@@ -309,9 +312,11 @@ class ColumnService:
 				frappe.throw(_("Column must have 'fieldname'"))
 			
 			fieldname = column["fieldname"]
+			frappe.logger().debug(f"Validating field: {fieldname}")
 			
 			# Skip validation for system fields that might not be in available_fields
 			if fieldname in ["name", "owner", "creation", "modified", "modified_by"]:
+				frappe.logger().debug(f"Skipping validation for system field: {fieldname}")
 				continue
 			
 			if fieldname not in available_fieldnames:

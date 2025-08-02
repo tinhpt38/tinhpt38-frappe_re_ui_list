@@ -67,14 +67,24 @@ column_management.listViewApplierDebug = {
         const checkListView = () => {
             attempts++;
             
-            // Check if list view elements exist
-            const listView = $('.list-view-container, .list-container, .list-view');
-            const listHeader = $('.list-header, .list-view-container .list-header, .list-row-header');
-            const listBody = $('.list-body, .list-view-container .list-body');
+            // Check if list view elements exist - multiple selectors
+            const listView = $('.list-view-container, .list-container, .list-view, .list-page');
+            const listHeader = $('.list-header, .list-view-container .list-header, .list-row-header, .list-page .list-header');
+            const listBody = $('.list-body, .list-view-container .list-body, .list-page .list-body');
+            const dataTable = $('.datatable, .list-view-container .datatable');
+            const tableRows = $('.list-row, .list-view-container .list-row, .datatable tbody tr');
             
-            console.log(`🔍 [DEBUG] Attempt ${attempts}: listView=${listView.length}, listHeader=${listHeader.length}, listBody=${listBody.length}`);
+            console.log(`🔍 [DEBUG] Attempt ${attempts}: listView=${listView.length}, listHeader=${listHeader.length}, listBody=${listBody.length}, dataTable=${dataTable.length}, tableRows=${tableRows.length}`);
             
-            if (listView.length > 0 && listHeader.length > 0) {
+            // Check if we're actually on a list view page or form view with list elements
+            const isListViewPage = window.location.href.includes('/list') || 
+                                 window.location.href.includes('/desk#List/') ||
+                                 $('.list-view-container, .list-container, .list-view, .list-page').length > 0;
+            
+            const isFormViewWithList = window.location.href.includes('/app/') && 
+                                     (tableRows.length > 0 || dataTable.length > 0);
+            
+            if ((isListViewPage || isFormViewWithList) && (listView.length > 0 || dataTable.length > 0 || tableRows.length > 0)) {
                 console.log('✅ [DEBUG] List view ready, applying config...');
                 callback();
             } else if (attempts < maxAttempts) {
@@ -82,6 +92,10 @@ column_management.listViewApplierDebug = {
                 setTimeout(checkListView, 100);
             } else {
                 console.log('❌ [DEBUG] List view not found after timeout');
+                console.log('🔍 [DEBUG] Current URL:', window.location.href);
+                console.log('🔍 [DEBUG] Available containers:', $('.list-view-container, .list-container, .list-view, .list-page').length);
+                console.log('🔍 [DEBUG] Table rows found:', tableRows.length);
+                console.log('🔍 [DEBUG] Data table found:', dataTable.length);
             }
         };
         
@@ -168,7 +182,15 @@ column_management.listViewApplierDebug = {
             `.list-row [data-fieldname="${fieldname}"]`,
             `th[data-fieldname="${fieldname}"]`,
             `td[data-fieldname="${fieldname}"]`,
-            `.list-view-container [data-fieldname="${fieldname}"]`
+            `.list-view-container [data-fieldname="${fieldname}"]`,
+            `.datatable [data-fieldname="${fieldname}"]`,
+            `.list-page [data-fieldname="${fieldname}"]`,
+            `[data-fieldname="${fieldname}"]:not(.form-group)`,
+            // Form view selectors
+            `.form-group[data-fieldname="${fieldname}"]`,
+            `.frappe-control[data-fieldname="${fieldname}"]`,
+            `input[data-fieldname="${fieldname}"]`,
+            `select[data-fieldname="${fieldname}"]`
         ];
         
         let hiddenCount = 0;
@@ -192,7 +214,15 @@ column_management.listViewApplierDebug = {
             `.list-row [data-fieldname="${fieldname}"]`,
             `th[data-fieldname="${fieldname}"]`,
             `td[data-fieldname="${fieldname}"]`,
-            `.list-view-container [data-fieldname="${fieldname}"]`
+            `.list-view-container [data-fieldname="${fieldname}"]`,
+            `.datatable [data-fieldname="${fieldname}"]`,
+            `.list-page [data-fieldname="${fieldname}"]`,
+            `[data-fieldname="${fieldname}"]:not(.form-group)`,
+            // Form view selectors
+            `.form-group[data-fieldname="${fieldname}"]`,
+            `.frappe-control[data-fieldname="${fieldname}"]`,
+            `input[data-fieldname="${fieldname}"]`,
+            `select[data-fieldname="${fieldname}"]`
         ];
         
         let shownCount = 0;
@@ -343,10 +373,13 @@ column_management.listViewApplierDebug = {
 
 // Auto-apply when list view loads
 $(document).ready(function() {
+    console.log('📋 [DEBUG] Document ready, checking for list view...');
     // Check if we're on a list view
     if (typeof cur_list !== 'undefined' && cur_list && cur_list.doctype) {
-        console.log('📋 [DEBUG] List view detected, applying column config...');
+        console.log('📋 [DEBUG] List view detected, applying column config for:', cur_list.doctype);
         column_management.listViewApplierDebug.init(cur_list.doctype);
+    } else {
+        console.log('📋 [DEBUG] No list view detected on document ready');
     }
 });
 
@@ -362,10 +395,24 @@ $(document).on('DOMNodeInserted', function(e) {
         console.log('🔄 [DEBUG] List view container detected, applying config...');
         setTimeout(() => {
             if (cur_list && cur_list.doctype) {
+                console.log('🔄 [DEBUG] Applying config for doctype:', cur_list.doctype);
                 column_management.listViewApplierDebug.init(cur_list.doctype);
+            } else {
+                console.log('🔄 [DEBUG] cur_list not available yet');
             }
         }, 500);
     }
+});
+
+// Also listen for URL changes
+$(window).on('hashchange', function() {
+    console.log('🔄 [DEBUG] URL changed, checking for list view...');
+    setTimeout(() => {
+        if (cur_list && cur_list.doctype) {
+            console.log('🔄 [DEBUG] Applying config after URL change for:', cur_list.doctype);
+            column_management.listViewApplierDebug.init(cur_list.doctype);
+        }
+    }, 1000);
 });
 
 // Global function to apply config

@@ -87,11 +87,27 @@ function addColumnManageButton(listView) {
 }
 
 // Also try to add button when page content changes
-$(document).on('DOMNodeInserted', function(e) {
-    if ($(e.target).hasClass('list-view-container') || $(e.target).find('.list-view-container').length > 0) {
-        console.log('List view container detected, adding button...');
-        setTimeout(function() {
-            addColumnManageButton();
-        }, 1000);
-    }
+// Use MutationObserver instead of deprecated DOMNodeInserted
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) { // Element node
+                    const $node = $(node);
+                    if ($node.hasClass('list-view-container') || $node.find('.list-view-container').length > 0) {
+                        console.log('List view container detected, adding button...');
+                        setTimeout(function() {
+                            addColumnManageButton();
+                        }, 1000);
+                    }
+                }
+            });
+        }
+    });
+});
+
+// Start observing
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
 }); 

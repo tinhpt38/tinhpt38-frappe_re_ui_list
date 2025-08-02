@@ -26,7 +26,7 @@ class MetadataService:
 		metadata = self._fetch_doctype_metadata(doctype)
 		
 		# Cache the result
-		self.cache.set(cache_key, json.dumps(metadata), expire=self.cache_ttl)
+		self.cache.set(cache_key, json.dumps(metadata), self.cache_ttl)
 		
 		return metadata
 	
@@ -117,7 +117,7 @@ class MetadataService:
 			frappe.throw(_("Field {0} does not exist in DocType {1}").format(fieldname, doctype))
 		
 		# Cache the result
-		self.cache.set(cache_key, json.dumps(field_metadata), expire=self.cache_ttl)
+		self.cache.set(cache_key, json.dumps(field_metadata), self.cache_ttl)
 		
 		return field_metadata
 	
@@ -333,7 +333,7 @@ class MetadataService:
 							})
 			
 			# Cache the result
-			self.cache.set(cache_key, json.dumps(options), expire=self.cache_ttl)
+			self.cache.set(cache_key, json.dumps(options), self.cache_ttl)
 			
 			return options
 			
@@ -427,7 +427,7 @@ class MetadataService:
 		)
 		
 		# Cache the result
-		self.cache.set(cache_key, json.dumps(doctypes), expire=self.cache_ttl)
+		self.cache.set(cache_key, json.dumps(doctypes), self.cache_ttl)
 		
 		return doctypes
 	
