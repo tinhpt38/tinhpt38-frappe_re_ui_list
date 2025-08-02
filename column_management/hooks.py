@@ -22,7 +22,8 @@ app_license = "MIT"
 # Include CSS for column manager component
 app_include_css = [
     "/assets/column_management/css/column_manager.css",
-    "/assets/column_management/css/column_manager_dialog.css"
+    "/assets/column_management/css/column_manager_dialog.css",
+    "/assets/column_management/css/list_view_styles.css"
 ]
 
 # Include JavaScript for column manager component
@@ -31,6 +32,7 @@ app_include_js = [
     "/assets/column_management/js/column_management_simple.js",
     "/assets/column_management/js/column_management_enhanced.js",
     "/assets/column_management/js/column_manager_dialog.js",
+    "/assets/column_management/js/list_view_applier.js",
     "/assets/column_management/js/components/column_manager.js",
     "/assets/column_management/js/preference_manager.js",
     "/assets/column_management/js/list_view_integration.js"

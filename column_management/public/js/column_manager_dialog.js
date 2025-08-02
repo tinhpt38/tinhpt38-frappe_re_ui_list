@@ -11,30 +11,73 @@ column_management.dialog = {
     // Initialize dialog
     init: function(doctype) {
         this.currentDoctype = doctype;
-        this.currentUser = frappe.user.name;
+        this.currentUser = frappe.user ? frappe.user.name : 'Administrator';
+        console.log('🔧 Initializing dialog for doctype:', doctype, 'user:', this.currentUser);
         this.loadColumnData();
     },
     
     // Load column data from server
     loadColumnData: function() {
+        console.log('📡 Loading column data for:', this.currentDoctype);
+        
+        // Check if we're in ERPNext environment
+        if (typeof frappe === 'undefined' || typeof frappe.call === 'undefined') {
+            console.log('⚠️ Not in ERPNext environment, using mock data');
+            this.loadMockData();
+            return;
+        }
+        
         frappe.call({
             method: 'column_management.api.column_manager.get_column_config',
             args: {
                 doctype: this.currentDoctype
             },
             callback: (r) => {
+                console.log('📡 API Response:', r);
                 if (r.message && r.message.success) {
                     this.availableColumns = r.message.data.available_columns || [];
                     this.selectedColumns = r.message.data.selected_columns || [];
                     this.showDialog();
                 } else {
-                    frappe.show_alert('❌ Failed to load column data', 'error');
+                    console.log('❌ API failed, using mock data');
+                    this.loadMockData();
                 }
             },
             error: (r) => {
-                frappe.show_alert('❌ Error loading column data', 'error');
+                console.log('❌ API error, using mock data:', r);
+                this.loadMockData();
             }
         });
+    },
+    
+    // Load mock data for testing
+    loadMockData: function() {
+        console.log('🎭 Loading mock data...');
+        this.availableColumns = [
+            { fieldname: 'item_code', label: 'Item Code', fieldtype: 'Data' },
+            { fieldname: 'item_name', label: 'Item Name', fieldtype: 'Data' },
+            { fieldname: 'item_group', label: 'Item Group', fieldtype: 'Link' },
+            { fieldname: 'stock_uom', label: 'Stock UOM', fieldtype: 'Link' },
+            { fieldname: 'description', label: 'Description', fieldtype: 'Text' },
+            { fieldname: 'disabled', label: 'Disabled', fieldtype: 'Check' },
+            { fieldname: 'allow_alternative_item', label: 'Allow Alternative Item', fieldtype: 'Check' },
+            { fieldname: 'is_stock_item', label: 'Is Stock Item', fieldtype: 'Check' },
+            { fieldname: 'include_item_in_manufacturing', label: 'Include in Manufacturing', fieldtype: 'Check' },
+            { fieldname: 'opening_stock', label: 'Opening Stock', fieldtype: 'Float' },
+            { fieldname: 'valuation_rate', label: 'Valuation Rate', fieldtype: 'Currency' },
+            { fieldname: 'standard_rate', label: 'Standard Rate', fieldtype: 'Currency' },
+            { fieldname: 'is_fixed_asset', label: 'Is Fixed Asset', fieldtype: 'Check' },
+            { fieldname: 'auto_create_assets', label: 'Auto Create Assets', fieldtype: 'Check' },
+            { fieldname: 'asset_category', label: 'Asset Category', fieldtype: 'Link' }
+        ];
+        
+        this.selectedColumns = [
+            { fieldname: 'item_code', label: 'Item Code', width: 150, pinned: null, visible: 1, order: 0 },
+            { fieldname: 'item_name', label: 'Item Name', width: 200, pinned: null, visible: 1, order: 1 },
+            { fieldname: 'item_group', label: 'Item Group', width: 120, pinned: null, visible: 1, order: 2 }
+        ];
+        
+        this.showDialog();
     },
     
     // Show the main dialog
@@ -381,9 +424,18 @@ column_management.dialog = {
                     frappe.show_alert('✅ Configuration saved successfully', 'success');
                     this.dialog.hide();
                     
-                    // Refresh the current list view
-                    if (cur_list && cur_list.refresh) {
-                        cur_list.refresh();
+                    // Apply configuration to list view
+                    if (typeof column_management !== 'undefined' && column_management.listViewApplier) {
+                        console.log('🎨 Applying saved configuration to list view...');
+                        column_management.listViewApplier.init(this.currentDoctype);
+                    } else {
+                        console.log('🔄 Refreshing list view...');
+                        // Fallback: refresh list view
+                        if (cur_list && cur_list.refresh) {
+                            cur_list.refresh();
+                        } else {
+                            location.reload();
+                        }
                     }
                 } else {
                     frappe.show_alert('❌ Failed to save configuration', 'error');

@@ -45,8 +45,8 @@ class ColumnService:
 				"doctype_name": doctype,
 				"user": user
 			},
-			fields=["fieldname", "label", "width", "pinned", "visible", "order"],
-			order_by="order asc, fieldname asc"
+			fields=["fieldname", "label", "width", "pinned", "visible", "`order`"],
+			order_by="`order` asc, fieldname asc"
 		)
 		
 		# If no user config exists, create default configuration

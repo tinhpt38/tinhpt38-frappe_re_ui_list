@@ -1,0 +1,215 @@
+/* List View Styles for Column Management */
+
+/* Pinned Columns */
+.pinned-left {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 10 !important;
+    background-color: #fff !important;
+    border-right: 2px solid #337ab7 !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1) !important;
+}
+
+.pinned-right {
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 10 !important;
+    background-color: #fff !important;
+    border-left: 2px solid #337ab7 !important;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1) !important;
+}
+
+/* Multiple pinned columns */
+.pinned-left + .pinned-left {
+    left: auto !important;
+}
+
+.pinned-right + .pinned-right {
+    right: auto !important;
+}
+
+/* List view container with pinned columns */
+.list-view-container {
+    overflow-x: auto !important;
+}
+
+.list-view-container .list-row {
+    position: relative !important;
+}
+
+/* Column width adjustments */
+.list-row-header th,
+.list-row td {
+    min-width: 100px !important;
+    max-width: 500px !important;
+    word-wrap: break-word !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Hidden columns */
+.list-row-header th[style*="display: none"],
+.list-row td[style*="display: none"] {
+    display: none !important;
+}
+
+/* Column resizing */
+.list-row-header th {
+    position: relative !important;
+}
+
+.list-row-header th::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    cursor: col-resize;
+    background-color: transparent;
+}
+
+.list-row-header th:hover::after {
+    background-color: #337ab7;
+}
+
+/* Smooth transitions */
+.list-row-header th,
+.list-row td {
+    transition: all 0.3s ease !important;
+}
+
+/* Highlight pinned columns */
+.pinned-left,
+.pinned-right {
+    transition: all 0.3s ease !important;
+}
+
+.pinned-left:hover,
+.pinned-right:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* List view header with pinned columns */
+.list-view-container .list-row-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+    background-color: #f5f5f5 !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .pinned-left,
+    .pinned-right {
+        position: static !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    .list-view-container {
+        overflow-x: scroll !important;
+    }
+}
+
+/* Custom scrollbar for list view */
+.list-view-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.list-view-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.list-view-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.list-view-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Animation for column changes */
+@keyframes columnChange {
+    from {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.list-row-header th,
+.list-row td {
+    animation: columnChange 0.3s ease-out;
+}
+
+/* Loading state */
+.list-view-container.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.list-view-container.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #337ab7;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Column management indicators */
+.column-managed {
+    position: relative;
+}
+
+.column-managed::before {
+    content: '⚙️';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+/* Hover effects */
+.list-row:hover .pinned-left,
+.list-row:hover .pinned-right {
+    background-color: #e8f4fd !important;
+}
+
+/* Focus states */
+.list-row-header th:focus,
+.list-row td:focus {
+    outline: 2px solid #337ab7;
+    outline-offset: -2px;
+}
+
+/* Print styles */
+@media print {
+    .pinned-left,
+    .pinned-right {
+        position: static !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+    }
+    
+    .list-view-container {
+        overflow: visible !important;
+    }
+} 

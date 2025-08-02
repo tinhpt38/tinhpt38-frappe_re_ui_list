@@ -185,10 +185,17 @@ function createColumnManageButton(doctype, isFallback = false) {
 
 // Show column manager dialog
 function showColumnManageDialog(doctype) {
-    // Use the new column manager dialog
+    console.log('🔧 Opening column manager dialog for:', doctype);
+    
+    // Check if new dialog is available
     if (typeof column_management !== 'undefined' && column_management.dialog) {
+        console.log('✅ Using new column manager dialog');
         column_management.dialog.init(doctype);
+    } else if (typeof showColumnManager === 'function') {
+        console.log('✅ Using global showColumnManager function');
+        showColumnManager(doctype);
     } else {
+        console.log('⚠️ Using fallback dialog');
         // Fallback to simple dialog
         const dialog = new frappe.ui.Dialog({
             title: `Manage Columns for ${doctype}`,
@@ -203,6 +210,10 @@ function showColumnManageDialog(doctype) {
                             <p>Loading column manager...</p>
                             <button class="btn btn-primary" onclick="showColumnManager('${doctype}')">
                                 Open Column Manager
+                            </button>
+                            <br><br>
+                            <button class="btn btn-info" onclick="testColumnAPI('${doctype}')">
+                                Test API
                             </button>
                         </div>
                     `

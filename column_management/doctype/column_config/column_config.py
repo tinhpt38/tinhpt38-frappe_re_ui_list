@@ -103,8 +103,8 @@ class ColumnConfig(Document):
 				"doctype_name": doctype_name,
 				"user": user
 			},
-			fields=["fieldname", "label", "width", "pinned", "visible", "order"],
-			order_by="order asc, fieldname asc"
+			fields=["fieldname", "label", "width", "pinned", "visible", "`order`"],
+			order_by="`order` asc, fieldname asc"
 		)
 	
 	@staticmethod
