@@ -7,13 +7,19 @@ import frappe
 import json
 import math
 from frappe import _
-from column_management.column_management.services.cache_service import CacheService
 
 class VirtualScrollService:
     """Service for handling virtual scrolling and lazy loading"""
     
     def __init__(self):
-        self.cache_service = CacheService()
+        # Use lazy import for CacheService to avoid import issues
+        try:
+            from column_management.column_management.services.cache_service import CacheService
+            self.cache_service = CacheService()
+        except ImportError:
+            # Fallback to frappe cache if CacheService is not available
+            self.cache_service = frappe.cache()
+        
         self.default_buffer_size = 50  # Number of items to buffer above/below viewport
         self.default_item_height = 40  # Default row height in pixels
         self.preload_threshold = 0.8  # Preload when 80% through current buffer

@@ -7,13 +7,19 @@ import frappe
 import json
 import math
 from frappe import _
-from column_management.column_management.services.cache_service import CacheService
 
 class ColumnVirtualizationService:
     """Service for handling column virtualization for large datasets"""
     
     def __init__(self):
-        self.cache_service = CacheService()
+        # Use lazy import for CacheService to avoid import issues
+        try:
+            from column_management.column_management.services.cache_service import CacheService
+            self.cache_service = CacheService()
+        except ImportError:
+            # Fallback to frappe cache if CacheService is not available
+            self.cache_service = frappe.cache()
+        
         self.default_column_width = 150  # Default column width in pixels
         self.buffer_columns = 5  # Number of columns to buffer on each side
         self.min_visible_columns = 3  # Minimum columns to keep visible

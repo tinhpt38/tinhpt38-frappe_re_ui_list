@@ -8,13 +8,19 @@ import json
 import time
 import psutil
 from frappe import _
-from column_management.column_management.services.cache_service import CacheService
 
 class OptimizationService:
     """Service for comprehensive caching and performance optimization"""
     
     def __init__(self):
-        self.cache_service = CacheService()
+        # Use lazy import for CacheService to avoid import issues
+        try:
+            from column_management.column_management.services.cache_service import CacheService
+            self.cache_service = CacheService()
+        except ImportError:
+            # Fallback to frappe cache if CacheService is not available
+            self.cache_service = frappe.cache()
+        
         self.performance_metrics = {}
         self.optimization_rules = {}
         self.load_optimization_rules()

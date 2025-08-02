@@ -7,13 +7,19 @@ import frappe
 import json
 from frappe import _
 from frappe.utils import now, get_datetime
-from column_management.column_management.services.cache_service import CacheService
 
 class PreferenceService:
 	"""Service for managing user preferences with automatic saving and loading"""
 	
 	def __init__(self):
-		self.cache = CacheService()
+		# Use lazy import for CacheService to avoid import issues
+		try:
+			from column_management.column_management.services.cache_service import CacheService
+			self.cache = CacheService()
+		except ImportError:
+			# Fallback to frappe cache if CacheService is not available
+			self.cache = frappe.cache()
+		
 		self.cache_prefix = "column_management_prefs"
 		self.cache_ttl = 3600  # 1 hour
 		self.auto_save_enabled = True

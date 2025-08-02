@@ -9,7 +9,14 @@ from frappe import _
 
 class ColumnService:
 	def __init__(self):
-		self.cache = frappe.cache()
+		# Use lazy import for CacheService to avoid import issues
+		try:
+			from column_management.column_management.services.cache_service import CacheService
+			self.cache = CacheService()
+		except ImportError:
+			# Fallback to frappe cache if CacheService is not available
+			self.cache = frappe.cache()
+		
 		self.cache_prefix = "column_management"
 		self.cache_ttl = 3600  # 1 hour
 	
