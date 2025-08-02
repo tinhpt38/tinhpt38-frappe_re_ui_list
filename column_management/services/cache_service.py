@@ -64,6 +64,7 @@ class CacheService:
                 'created_at': time.time()
             }
             
+            # Use frappe.cache().set_value without expire parameter
             frappe.cache().set_value(cache_key, cached_data)
             
         except Exception as e:

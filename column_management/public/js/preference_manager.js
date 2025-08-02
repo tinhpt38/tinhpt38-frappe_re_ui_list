@@ -66,7 +66,22 @@ class PreferenceManager {
             
         } catch (error) {
             console.error('Error getting user preferences:', error);
-            return this.getDefaultPreferences(doctype_name);
+            // Return safe default preferences if backend fails
+            try {
+                return this.getDefaultPreferences(doctype_name);
+            } catch (defaultError) {
+                console.error('Error getting default preferences:', defaultError);
+                // Return minimal safe defaults
+                return {
+                    columns: {},
+                    filters: { active_filters: [], saved_filters: [], quick_filters: {} },
+                    pagination: { page_size: 20, current_page: 1 },
+                    sorting: { field: 'modified', order: 'desc' },
+                    view_settings: { show_statistics: true, compact_view: false },
+                    last_updated: new Date().toISOString(),
+                    version: '1.0'
+                };
+            }
         }
     }
     
@@ -467,7 +482,7 @@ class PreferenceManager {
                 auto_refresh: false,
                 refresh_interval: 30
             },
-            last_updated: frappe.datetime.now(),
+            last_updated: frappe.datetime.now_datetime(),
             version: '1.0'
         };
     }

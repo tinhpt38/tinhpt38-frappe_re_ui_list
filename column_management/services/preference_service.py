@@ -7,12 +7,13 @@ import frappe
 import json
 from frappe import _
 from frappe.utils import now, get_datetime
+from column_management.column_management.services.cache_service import CacheService
 
 class PreferenceService:
 	"""Service for managing user preferences with automatic saving and loading"""
 	
 	def __init__(self):
-		self.cache = frappe.cache()
+		self.cache = CacheService()
 		self.cache_prefix = "column_management_prefs"
 		self.cache_ttl = 3600  # 1 hour
 		self.auto_save_enabled = True
@@ -23,15 +24,23 @@ class PreferenceService:
 		cache_key = f"{self.cache_prefix}:user:{user}:{doctype_name}"
 		
 		# Try cache first
-		cached_prefs = self.cache.get(cache_key)
-		if cached_prefs:
-			return json.loads(cached_prefs)
+		try:
+			cached_prefs = self.cache.get(cache_key)
+			if cached_prefs:
+				return json.loads(cached_prefs)
+		except Exception as e:
+			frappe.log_error(f"Error getting from cache: {str(e)}")
+			# Continue to fetch from database
 		
 		# Get from database
 		preferences = self._fetch_user_preferences(user, doctype_name)
 		
 		# Cache the result
-		self.cache.set(cache_key, json.dumps(preferences), expire=self.cache_ttl)
+		try:
+			self.cache.set(cache_key, json.dumps(preferences), expire=self.cache_ttl)
+		except Exception as e:
+			frappe.log_error(f"Error setting cache: {str(e)}")
+			# Continue without caching
 		
 		return preferences
 	
@@ -43,8 +52,12 @@ class PreferenceService:
 			# Get user preference document
 			pref_data = UserColumnPreference.get_user_preference(user, doctype_name)
 			
-			if not pref_data:
+			if not pref_data or pref_data is None:
 				# Create default preferences
+				pref_data = self._create_default_preferences(user, doctype_name)
+			
+			# Ensure pref_data is a dict
+			if not isinstance(pref_data, dict):
 				pref_data = self._create_default_preferences(user, doctype_name)
 			
 			# Ensure all required sections exist
