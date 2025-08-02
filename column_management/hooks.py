@@ -14,26 +14,38 @@ app_license = "MIT"
 # Includes in <head>
 # ------------------
 
-# include js, css files in header of desk.html
+# include JavaScript, CSS files in header of desk.html
 # Temporarily disabled until build issues are resolved
 # app_include_css = "/assets/column_management/css/column_management.css"
 # app_include_js = "/assets/column_management/js/column_management.js"
 
-# include js, css files in header of web template
+# Include CSS for column manager component
+app_include_css = [
+    "/assets/column_management/css/column_manager.css"
+]
+
+# Include JavaScript for column manager component
+app_include_js = [
+    "/assets/column_management/js/components/column_manager.js",
+    "/assets/column_management/js/preference_manager.js",
+    "/assets/column_management/js/list_view_integration.js"
+]
+
+# include JavaScript, CSS files in header of web template
 # web_include_css = "/assets/column_management/css/column_management.css"
 # web_include_js = "/assets/column_management/js/column_management.js"
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "column_management/public/scss/website"
 
-# include js, css files in header of web form
+# include JavaScript, CSS files in header of web form
 # webform_include_js = {"doctype": "public/js/doctype.js"}
 # webform_include_css = {"doctype": "public/css/doctype.css"}
 
-# include js in page
+# include JavaScript in page
 # page_js = {"page" : "public/js/file.js"}
 
-# include js in doctype views
+# include JavaScript in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -105,6 +117,9 @@ doc_events = {
 		"on_cancel": "column_management.column_management.hooks.on_doc_cancel"
 	}
 }
+
+# Session events for preference management
+on_session_creation = "column_management.column_management.hooks.on_session_creation"
 
 # Scheduled Tasks
 # ---------------
@@ -245,6 +260,17 @@ def on_doc_cancel(doc, method):
 		if hasattr(doc, 'doctype') and doc.doctype:
 			service = StatisticsService()
 			service.invalidate_statistics_cache(doc.doctype)
+	except (ImportError, AttributeError, Exception):
+		# Silently handle errors during hooks to prevent breaking other functionality
+		pass
+
+# Session hooks for preference management
+def on_session_creation(login_manager):
+	"""Restore user preferences when user logs in"""
+	try:
+		from column_management.column_management.services.preference_service import PreferenceService
+		service = PreferenceService()
+		service.restore_preferences_on_login(login_manager.user)
 	except (ImportError, AttributeError, Exception):
 		# Silently handle errors during hooks to prevent breaking other functionality
 		pass

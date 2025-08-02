@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Column Manager Component Test</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Sortable.js -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Column Manager CSS -->
+    <link rel="stylesheet" href="../css/column_manager.css">
+    
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>Column Manager Component Test</h2>
+        <p class="text-muted">This is a standalone test for the Column Manager component.</p>
+        
+        <button id="test-column-manager" class="btn btn-primary test-button">
+            <i class="fa fa-columns"></i> Open Column Manager
+        </button>
+        
+        <div id="test-results" class="mt-4">
+            <h5>Test Results:</h5>
+            <div id="results-content" class="border p-3 bg-light">
+                Click the button above to test the Column Manager component.
+            </div>
+        </div>
+    </div>
+
+    <!-- Mock Frappe Framework -->
+    <script>
+        // Mock frappe object for testing
+        window.frappe = {
+            __: function(text, args) {
+                if (args) {
+                    return text.replace(/{(\d+)}/g, function(match, number) {
+                        return typeof args[number] != 'undefined' ? args[number] : match;
+                    });
+                }
+                return text;
+            },
+            
+            call: function(options) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        // Mock successful response
+                        resolve({
+                            message: {
+                                success: true,
+                                columns: [
+                                    {
+                                        fieldname: 'name',
+                                        label: 'Name',
+                                        fieldtype: 'Data',
+                                        width: 150,
+                                        visible: true,
+                                        order: 0,
+                                        pinned: null
+                                    },
+                                    {
+                                        fieldname: 'status',
+                                        label: 'Status',
+                                        fieldtype: 'Select',
+                                        width: 100,
+                                        visible: true,
+                                        order: 1,
+                                        pinned: null
+                                    },
+                                    {
+                                        fieldname: 'creation',
+                                        label: 'Created On',
+                                        fieldtype: 'Datetime',
+                                        width: 160,
+                                        visible: false,
+                                        order: 2,
+                                        pinned: null
+                                    },
+                                    {
+                                        fieldname: 'owner',
+                                        label: 'Owner',
+                                        fieldtype: 'Link',
+                                        width: 120,
+                                        visible: true,
+                                        order: 3,
+                                        pinned: 'left'
+                                    }
+                                ],
+                                preferences: {}
+                            }
+                        });
+                    }, 500);
+                });
+            },
+            
+            show_alert: function(options) {
+                const alertDiv = $(`
+                    <div class="alert alert-${options.indicator === 'green' ? 'success' : 
+                                              options.indicator === 'red' ? 'danger' : 
+                                              options.indicator === 'orange' ? 'warning' : 'info'} 
+                          alert-dismissible fade show" role="alert">
+                        ${options.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `);
+                
+                $('body').prepend(alertDiv);
+                setTimeout(() => alertDiv.remove(), 3000);
+            },
+            
+            show_progress: function(title, completed, total, description) {
+                console.log(`Progress: ${title} - ${completed}/${total} - ${description}`);
+            },
+            
+            hide_progress: function() {
+                console.log('Progress hidden');
+            },
+            
+            msgprint: function(options) {
+                if (typeof options === 'string') {
+                    alert(options);
+                } else {
+                    alert(options.message || options.title);
+                }
+            },
+            
+            confirm: function(message, callback) {
+                if (confirm(message)) {
+                    callback();
+                }
+            },
+            
+            get_meta: function(doctype) {
+                return {
+                    fields: [
+                        { fieldname: 'name', label: 'Name', fieldtype: 'Data', in_list_view: 1 },
+                        { fieldname: 'status', label: 'Status', fieldtype: 'Select', in_list_view: 1 },
+                        { fieldname: 'creation', label: 'Created On', fieldtype: 'Datetime', in_list_view: 0 },
+                        { fieldname: 'owner', label: 'Owner', fieldtype: 'Link', in_list_view: 1 }
+                    ]
+                };
+            },
+            
+            datetime: {
+                now_datetime: function() {
+                    return new Date().toISOString();
+                }
+            },
+            
+            session: {
+                user: 'test@example.com'
+            },
+            
+            utils: {
+                debounce: function(func, wait) {
+                    let timeout;
+                    return function executedFunction(...args) {
+                        const later = () => {
+                            clearTimeout(timeout);
+                            func(...args);
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                }
+            },
+            
+            ui: {
+                Dialog: function(options) {
+                    this.options = options;
+                    this.$wrapper = $('<div>');
+                    this.fields_dict = {};
+                    
+                    this.show = () => {
+                        const modal = $(`
+                            <div class="modal fade" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">${options.title}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ${options.fields[0].options}
+                                        </div>
+                                        <div class="modal-footer">
+                                            ${options.secondary_action_label ? 
+                                                `<button type="button" class="btn btn-secondary" id="secondary-action">${options.secondary_action_label}</button>` : ''}
+                                            <button type="button" class="btn btn-primary" id="primary-action">${options.primary_action_label}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                        
+                        $('body').append(modal);
+                        this.$wrapper = modal.find('.modal-body');
+                        
+                        // Setup field dict
+                        this.fields_dict.column_manager_html = {
+                            $wrapper: this.$wrapper
+                        };
+                        
+                        modal.find('#primary-action').on('click', options.primary_action);
+                        if (options.secondary_action) {
+                            modal.find('#secondary-action').on('click', options.secondary_action);
+                        }
+                        
+                        modal.modal('show');
+                        
+                        modal.on('hidden.bs.modal', () => {
+                            modal.remove();
+                        });
+                    };
+                    
+                    this.hide = () => {
+                        $('.modal').modal('hide');
+                    };
+                }
+            }
+        };
+        
+        // Global __ function
+        window.__ = frappe.__;
+    </script>
+
+    <!-- Column Manager Component -->
+    <script src="column_manager.js"></script>
+
+    <!-- Test Script -->
+    <script>
+        $(document).ready(function() {
+            $('#test-column-manager').on('click', function() {
+                // Create mock listview
+                const mockListview = {
+                    doctype: 'Test DocType',
+                    page: {
+                        add_action_item: function(label, callback, is_primary, icon) {
+                            console.log(`Added action item: ${label}`);
+                            // Auto-trigger for testing
+                            setTimeout(callback, 100);
+                        }
+                    },
+                    refresh: function() {
+                        $('#results-content').html(`
+                            <div class="alert alert-success">
+                                <strong>Success!</strong> Column configuration applied to list view.
+                                <br><small>Timestamp: ${new Date().toLocaleString()}</small>
+                            </div>
+                        `);
+                    }
+                };
+                
+                // Initialize Column Manager
+                window.column_manager = new ColumnManager({
+                    doctype: 'Test DocType',
+                    listview: mockListview
+                });
+                
+                $('#results-content').html(`
+                    <div class="alert alert-info">
+                        <strong>Column Manager Initialized!</strong> 
+                        The component should open automatically for testing.
+                    </div>
+                `);
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

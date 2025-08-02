@@ -1029,6 +1029,358 @@ def _get_saved_filter_config(doctype, filter_name, user):
 		return None
 
 @frappe.whitelist()
+def get_virtual_scroll_data(doctype, viewport_start, viewport_end, total_height, 
+                           item_height=None, filters=None, sort_by=None, sort_order="asc", 
+                           columns=None, user=None):
+	"""Get data for virtual scrolling viewport - Task 13.1"""
+	try:
+		from column_management.column_management.services.virtual_scroll_service import VirtualScrollService
+		
+		virtual_scroll_service = VirtualScrollService()
+		return virtual_scroll_service.get_virtual_data(
+			doctype=doctype,
+			viewport_start=int(viewport_start),
+			viewport_end=int(viewport_end),
+			total_height=int(total_height),
+			item_height=int(item_height) if item_height else None,
+			filters=filters,
+			sort_by=sort_by,
+			sort_order=sort_order,
+			columns=columns,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error getting virtual scroll data: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def preload_virtual_data(doctype, preload_ranges, filters=None, sort_by=None, 
+                        sort_order="asc", columns=None, user=None):
+	"""Preload data for virtual scrolling - Task 13.1"""
+	try:
+		from column_management.column_management.services.virtual_scroll_service import VirtualScrollService
+		
+		# Parse preload ranges
+		if isinstance(preload_ranges, str):
+			preload_ranges = json.loads(preload_ranges)
+		
+		virtual_scroll_service = VirtualScrollService()
+		return virtual_scroll_service.preload_data(
+			doctype=doctype,
+			preload_ranges=preload_ranges,
+			filters=filters,
+			sort_by=sort_by,
+			sort_order=sort_order,
+			columns=columns,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error preloading virtual data: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def get_scroll_metrics(doctype, scroll_history, user=None):
+	"""Get scroll metrics for intelligent preloading - Task 13.1"""
+	try:
+		from column_management.column_management.services.virtual_scroll_service import VirtualScrollService
+		
+		# Parse scroll history
+		if isinstance(scroll_history, str):
+			scroll_history = json.loads(scroll_history)
+		
+		virtual_scroll_service = VirtualScrollService()
+		return virtual_scroll_service.get_scroll_metrics(
+			doctype=doctype,
+			scroll_history=scroll_history,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error getting scroll metrics: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def invalidate_virtual_cache(doctype, user=None):
+	"""Invalidate virtual scroll cache - Task 13.1"""
+	try:
+		from column_management.column_management.services.virtual_scroll_service import VirtualScrollService
+		
+		virtual_scroll_service = VirtualScrollService()
+		return virtual_scroll_service.invalidate_virtual_cache(
+			doctype=doctype,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error invalidating virtual cache: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def get_virtual_columns(doctype, viewport_left, viewport_width, total_width, 
+                       columns=None, user=None):
+	"""Get columns for column virtualization viewport - Task 13.2"""
+	try:
+		from column_management.column_management.services.column_virtualization_service import ColumnVirtualizationService
+		
+		column_virtualization_service = ColumnVirtualizationService()
+		return column_virtualization_service.get_virtual_columns(
+			doctype=doctype,
+			viewport_left=int(viewport_left),
+			viewport_width=int(viewport_width),
+			total_width=int(total_width),
+			columns=columns,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error getting virtual columns: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def preload_columns(doctype, column_ranges, columns=None, user=None):
+	"""Preload columns for column virtualization - Task 13.2"""
+	try:
+		from column_management.column_management.services.column_virtualization_service import ColumnVirtualizationService
+		
+		# Parse column ranges
+		if isinstance(column_ranges, str):
+			column_ranges = json.loads(column_ranges)
+		
+		column_virtualization_service = ColumnVirtualizationService()
+		return column_virtualization_service.preload_columns(
+			doctype=doctype,
+			column_ranges=column_ranges,
+			columns=columns,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error preloading columns: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def get_column_metrics(doctype, scroll_history, user=None):
+	"""Get column scroll metrics for intelligent preloading - Task 13.2"""
+	try:
+		from column_management.column_management.services.column_virtualization_service import ColumnVirtualizationService
+		
+		# Parse scroll history
+		if isinstance(scroll_history, str):
+			scroll_history = json.loads(scroll_history)
+		
+		column_virtualization_service = ColumnVirtualizationService()
+		return column_virtualization_service.get_column_metrics(
+			doctype=doctype,
+			scroll_history=scroll_history,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error getting column metrics: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def invalidate_column_cache(doctype, user=None):
+	"""Invalidate column virtualization cache - Task 13.2"""
+	try:
+		from column_management.column_management.services.column_virtualization_service import ColumnVirtualizationService
+		
+		column_virtualization_service = ColumnVirtualizationService()
+		return column_virtualization_service.invalidate_column_cache(
+			doctype=doctype,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error invalidating column cache: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def optimize_column_rendering(doctype, columns, viewport_width, user=None):
+	"""Optimize column rendering for performance - Task 13.2"""
+	try:
+		from column_management.column_management.services.column_virtualization_service import ColumnVirtualizationService
+		
+		# Parse columns
+		if isinstance(columns, str):
+			columns = json.loads(columns)
+		
+		column_virtualization_service = ColumnVirtualizationService()
+		return column_virtualization_service.optimize_column_rendering(
+			doctype=doctype,
+			columns=columns,
+			viewport_width=int(viewport_width),
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error optimizing column rendering: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def get_cache_strategy(doctype, operation_type, user=None):
+	"""Get comprehensive caching strategy - Task 13.3"""
+	try:
+		from column_management.column_management.services.optimization_service import OptimizationService
+		
+		optimization_service = OptimizationService()
+		return optimization_service.get_comprehensive_cache_strategy(
+			doctype=doctype,
+			operation_type=operation_type,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error getting cache strategy: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def optimize_database_queries(doctype, query_patterns=None, user=None):
+	"""Optimize database queries for performance - Task 13.3"""
+	try:
+		from column_management.column_management.services.optimization_service import OptimizationService
+		
+		# Parse query patterns
+		if isinstance(query_patterns, str):
+			query_patterns = json.loads(query_patterns) if query_patterns else None
+		
+		optimization_service = OptimizationService()
+		return optimization_service.optimize_database_queries(
+			doctype=doctype,
+			query_patterns=query_patterns,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error optimizing database queries: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def monitor_performance_bottlenecks(doctype=None, time_window=3600):
+	"""Monitor and detect performance bottlenecks - Task 13.3"""
+	try:
+		from column_management.column_management.services.optimization_service import OptimizationService
+		
+		optimization_service = OptimizationService()
+		return optimization_service.monitor_performance_bottlenecks(
+			doctype=doctype,
+			time_window=int(time_window)
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error monitoring performance bottlenecks: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def implement_intelligent_caching(doctype, access_patterns=None, user=None):
+	"""Implement intelligent caching based on access patterns - Task 13.3"""
+	try:
+		from column_management.column_management.services.optimization_service import OptimizationService
+		
+		# Parse access patterns
+		if isinstance(access_patterns, str):
+			access_patterns = json.loads(access_patterns) if access_patterns else None
+		
+		optimization_service = OptimizationService()
+		return optimization_service.implement_intelligent_caching(
+			doctype=doctype,
+			access_patterns=access_patterns,
+			user=user
+		)
+		
+	except Exception as e:
+		frappe.log_error(f"Error implementing intelligent caching: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def optimize_memory_usage(doctype=None):
+	"""Optimize memory usage across the application - Task 13.3"""
+	try:
+		from column_management.column_management.services.optimization_service import OptimizationService
+		
+		optimization_service = OptimizationService()
+		return optimization_service.optimize_memory_usage(doctype=doctype)
+		
+	except Exception as e:
+		frappe.log_error(f"Error optimizing memory usage: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
+def get_performance_dashboard(doctype=None):
+	"""Get performance monitoring dashboard data - Task 13.3"""
+	try:
+		from column_management.column_management.services.optimization_service import OptimizationService
+		
+		optimization_service = OptimizationService()
+		return optimization_service.create_performance_dashboard(doctype=doctype)
+		
+	except Exception as e:
+		frappe.log_error(f"Error getting performance dashboard: {str(e)}")
+		return {
+			"success": False,
+			"data": None,
+			"message": str(e)
+		}
+
+@frappe.whitelist()
 def validate_pagination_state(doctype, pagination_state, filters=None, user=None):
 	"""Validate and adjust pagination state based on current filters - Task 9.2"""
 	try:
