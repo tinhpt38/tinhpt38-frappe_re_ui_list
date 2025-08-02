@@ -33,6 +33,7 @@ app_include_js = [
     "/assets/column_management/js/column_management_enhanced.js",
     "/assets/column_management/js/column_manager_dialog.js",
     "/assets/column_management/js/list_view_applier.js",
+    "/assets/column_management/js/list_view_applier_debug.js",
     "/assets/column_management/js/components/column_manager.js",
     "/assets/column_management/js/preference_manager.js",
     "/assets/column_management/js/list_view_integration.js"

@@ -298,6 +298,9 @@ class ColumnService:
 		available_fields = self._get_doctype_fields(doctype)
 		available_fieldnames = {field["fieldname"] for field in available_fields}
 		
+		# Debug: log available fields
+		frappe.logger().debug(f"Available fields for {doctype}: {list(available_fieldnames)}")
+		
 		for column in config["columns"]:
 			if not isinstance(column, dict):
 				frappe.throw(_("Each column must be a dictionary"))
@@ -306,7 +309,13 @@ class ColumnService:
 				frappe.throw(_("Column must have 'fieldname'"))
 			
 			fieldname = column["fieldname"]
+			
+			# Skip validation for system fields that might not be in available_fields
+			if fieldname in ["name", "owner", "creation", "modified", "modified_by"]:
+				continue
+			
 			if fieldname not in available_fieldnames:
+				frappe.logger().error(f"Field '{fieldname}' not found in available fields: {list(available_fieldnames)}")
 				frappe.throw(_("Field '{0}' does not exist in DocType '{1}'").format(fieldname, doctype))
 			
 			# Validate width

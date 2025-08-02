@@ -425,7 +425,10 @@ column_management.dialog = {
                     this.dialog.hide();
                     
                     // Apply configuration to list view
-                    if (typeof column_management !== 'undefined' && column_management.listViewApplier) {
+                    if (typeof column_management !== 'undefined' && column_management.listViewApplierDebug) {
+                        console.log('🎨 Applying saved configuration to list view (debug)...');
+                        column_management.listViewApplierDebug.init(this.currentDoctype);
+                    } else if (typeof column_management !== 'undefined' && column_management.listViewApplier) {
                         console.log('🎨 Applying saved configuration to list view...');
                         column_management.listViewApplier.init(this.currentDoctype);
                     } else {

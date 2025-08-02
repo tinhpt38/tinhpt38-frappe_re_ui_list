@@ -455,3 +455,38 @@ class MetadataService:
 			
 		except:
 			return False
+	
+	def get_doctype_fields(self, doctype):
+		"""Get all fields for a DocType - simplified version for column management"""
+		try:
+			# Get DocType metadata
+			metadata = self.get_doctype_metadata(doctype)
+			
+			# Return only fields that are suitable for list view
+			list_view_fields = []
+			for field in metadata["fields"]:
+				# Skip system fields and hidden fields
+				if field["fieldname"] in ["name", "owner", "creation", "modified", "modified_by"]:
+					continue
+				
+				# Skip fields that are not suitable for list view
+				if field["fieldtype"] in ["HTML Editor", "Text Editor", "Attach", "Attach Image"]:
+					continue
+				
+				# Add field to list
+				list_view_fields.append({
+					"fieldname": field["fieldname"],
+					"label": field["label"],
+					"fieldtype": field["fieldtype"],
+					"options": field["options"],
+					"in_list_view": field["in_list_view"],
+					"width": field["width"] or 150,
+					"sortable": field["sortable"],
+					"filterable": field["filterable"]
+				})
+			
+			return list_view_fields
+			
+		except Exception as e:
+			frappe.log_error(f"Error getting DocType fields: {str(e)}")
+			return []
