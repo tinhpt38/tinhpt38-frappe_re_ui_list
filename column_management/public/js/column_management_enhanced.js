@@ -183,31 +183,36 @@ function createColumnManageButton(doctype, isFallback = false) {
     return btn;
 }
 
-// Simple dialog function
+// Show column manager dialog
 function showColumnManageDialog(doctype) {
-    const dialog = new frappe.ui.Dialog({
-        title: `Manage Columns for ${doctype}`,
-        fields: [
-            {
-                fieldtype: 'HTML',
-                fieldname: 'content',
-                options: `
-                    <div style="padding: 20px; text-align: center;">
-                        <h4>Column Management</h4>
-                        <p>Doctype: <strong>${doctype}</strong></p>
-                        <p>This feature is working! 🎉</p>
-                        <p>You can now implement the full column management functionality.</p>
-                        <button class="btn btn-primary" onclick="testColumnAPI('${doctype}')">
-                            Test API
-                        </button>
-                    </div>
-                `
-            }
-        ],
-        size: 'medium'
-    });
+    // Use the new column manager dialog
+    if (typeof column_management !== 'undefined' && column_management.dialog) {
+        column_management.dialog.init(doctype);
+    } else {
+        // Fallback to simple dialog
+        const dialog = new frappe.ui.Dialog({
+            title: `Manage Columns for ${doctype}`,
+            fields: [
+                {
+                    fieldtype: 'HTML',
+                    fieldname: 'content',
+                    options: `
+                        <div style="padding: 20px; text-align: center;">
+                            <h4>Column Management</h4>
+                            <p>Doctype: <strong>${doctype}</strong></p>
+                            <p>Loading column manager...</p>
+                            <button class="btn btn-primary" onclick="showColumnManager('${doctype}')">
+                                Open Column Manager
+                            </button>
+                        </div>
+                    `
+                }
+            ],
+            size: 'medium'
+        });
 
-    dialog.show();
+        dialog.show();
+    }
 }
 
 // Test API function

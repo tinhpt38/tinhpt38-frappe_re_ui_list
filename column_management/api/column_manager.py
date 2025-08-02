@@ -33,9 +33,20 @@ def get_column_config(doctype, user=None):
 		column_service = ColumnService()
 		config = column_service.get_user_column_config(doctype, user)
 		
+		# Get available fields for the doctype
+		metadata_service = MetadataService()
+		available_fields = metadata_service.get_doctype_fields(doctype)
+		
+		# Format data for dialog
+		formatted_data = {
+			"available_columns": available_fields,
+			"selected_columns": config.get("columns", []),
+			"settings": config.get("settings", {})
+		}
+		
 		return {
 			"success": True,
-			"data": config,
+			"data": formatted_data,
 			"message": _("Column configuration retrieved successfully")
 		}
 		
