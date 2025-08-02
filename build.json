@@ -2,7 +2,28 @@
 	"css/column_management.css": [
 		"public/css/column_management.css"
 	],
+	"css/column_manager.css": [
+		"public/css/column_manager.css"
+	],
 	"js/column_management.js": [
 		"public/js/column_management.js"
+	],
+	"js/components/column_manager.js": [
+		"public/js/components/column_manager.js"
+	],
+	"js/preference_manager.js": [
+		"public/js/preference_manager.js"
+	],
+	"js/list_view_integration.js": [
+		"public/js/list_view_integration.js"
+	],
+	"js/column_virtualization.js": [
+		"public/js/column_virtualization.js"
+	],
+	"js/virtual_scroll.js": [
+		"public/js/virtual_scroll.js"
+	],
+	"js/performance_monitor.js": [
+		"public/js/performance_monitor.js"
 	]
 }

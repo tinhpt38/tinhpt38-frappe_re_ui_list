@@ -56,6 +56,25 @@ bench --site your-site-name install-app column_management
 bench --site your-site-name migrate
 ```
 
+### Cài đặt trên Docker
+
+**⚠️ Quan trọng**: Sau khi cài đặt trên Docker, có thể gặp lỗi 404 cho assets. Sử dụng script tự động để fix:
+
+```bash
+# Chạy script fix assets
+chmod +x fix_assets.sh
+./fix_assets.sh
+```
+
+Hoặc thực hiện thủ công theo hướng dẫn trong `ASSETS_FIX_GUIDE.md`.
+
+**Lỗi thường gặp**:
+```
+GET http://localhost:8080/assets/column_management/css/column_manager.css net::ERR_ABORTED 404 (Not Found)
+GET http://localhost:8080/assets/frappe/dist/css/desk.bundle.[hash].css net::ERR_ABORTED 404 (Not Found)
+GET http://localhost:8080/assets/erpnext/dist/css/erpnext.bundle.[hash].css net::ERR_ABORTED 404 (Not Found)
+```
+
 ## Usage
 
 After installation, the column management features will be automatically available in all List Views:

@@ -26,6 +26,9 @@ app_include_css = [
 
 # Include JavaScript for column manager component
 app_include_js = [
+    "/assets/column_management/js/column_management.js",
+    "/assets/column_management/js/column_management_simple.js",
+    "/assets/column_management/js/column_management_enhanced.js",
     "/assets/column_management/js/components/column_manager.js",
     "/assets/column_management/js/preference_manager.js",
     "/assets/column_management/js/list_view_integration.js"

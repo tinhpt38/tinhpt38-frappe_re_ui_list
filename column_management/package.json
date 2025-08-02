@@ -1,0 +1,15 @@
+{
+  "name": "column_management",
+  "version": "1.0.0",
+  "description": "Advanced column management system for ERPNext List Views",
+  "main": "public/js/column_management.js",
+  "scripts": {
+    "build": "echo 'Build completed'"
+  },
+  "author": "P. Tính",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tinhpt38/tinhpt38-frappe_re_ui_list.git"
+  }
+} 
